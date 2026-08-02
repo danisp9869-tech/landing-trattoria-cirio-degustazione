@@ -103,15 +103,15 @@ const CONFIG = {
   /* Sostituisci i file foto-1/2/3.jpg nella cartella con le foto reali.    */
   galleria: {
     attivo: true,
-    titolo: "Un'esperienza unica della tradizione",
+    // Come l'headline dell'hero: <em> evidenzia una parola in oro corsivo
+    titolo: "Un'esperienza <em>unica</em> della tradizione",
+    sottotitolo: "Pasta tirata a mano al mattino, sugo d'arrosto che sobbolle per ore, ogni dettaglio curato con la pazienza di sempre. Da Cirio non scegli un piatto: ti siedi e ti lasci accompagnare, portata dopo portata.",
     foto: [
-      // ↓ le prime due in VERTICALE, affiancate in alto
-      { src: "antipasto-misto.jpg",  alt: "Antipasto misto della tradizione piemontese" },
-      { src: "guancia-brasata.jpg",  alt: "Guancia brasata su purè di patate" },
-      // ↓ le ultime due in ORIZZONTALE, a tutta larghezza una sotto l'altra.
-      //   Posti già pronti: appena i file esistono nella cartella compaiono da soli.
-      { src: "foto-orizzontale-1.jpg", alt: "Agnolotto al sugo d'arrosto fatto a mano" },
-      { src: "foto-orizzontale-2.jpg", alt: "Pesche ripiene alla langarola" },
+      // Tutte e quattro in verticale: griglia 2×2 (vedi .galleria.has-4)
+      { src: "antipasto-misto.jpg", alt: "Antipasto misto della tradizione piemontese" },
+      { src: "guancia-brasata.jpg", alt: "Guancia brasata su purè di patate" },
+      { src: "risotto-burrata.jpg", alt: "Risotto con quenelle di burrata" },
+      { src: "gnocchi-verdi.jpg",   alt: "Gnocchi verdi con fonduta e fiori eduli" },
     ],
   },
 
@@ -222,6 +222,9 @@ const CONFIG = {
   --gold-pale:#fdf6e3;
   --cta-bg:#b8933a;
   --cta-text:#1a1612;
+  /* Respiro fra i blocchi della pagina (hero, offerta, galleria, form).
+     Scala col viewport: più stretto su telefono, più arioso su desktop. */
+  --gap-sezioni:clamp(64px,13vw,110px);
   --gray-100:#f4f2ee;
   --gray-200:#e8e4de;
   --gray-300:#ccc8c0;
@@ -279,7 +282,7 @@ body::before{
 }
 
 /* ── HERO ── */
-.brand-header{text-align:center;width:100%;margin-bottom:36px}
+.brand-header{text-align:center;width:100%;margin-bottom:var(--gap-sezioni)}
 .logo-wrap{
   width:100px;height:100px;border-radius:50%;
   background:var(--warm-white);
@@ -336,7 +339,7 @@ h1 em{font-style:italic;color:var(--gold)}
 
 /* ── OFFERTA MENU DEGUSTAZIONE ── */
 .offerta{
-  width:100%;margin:0 0 32px;padding:28px 26px;text-align:center;
+  width:100%;margin:0 0 var(--gap-sezioni);padding:28px 26px;text-align:center;
   background:var(--warm-white);
   border:1px solid rgba(184,147,58,.22);
   border-radius:var(--radius-lg);
@@ -401,11 +404,11 @@ h1 em{font-style:italic;color:var(--gold)}
 .offerta-prezzo-nota{
   font-size:15px;font-weight:500;color:var(--ink-light);
 }
-/* Solo testo, senza riquadro */
+/* Solo testo, senza riquadro: nota di servizio, non deve competere col prezzo */
 .offerta-validita{
-  display:block;
-  font-size:12px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;
-  color:var(--ink-light);
+  display:block;margin-top:14px;
+  font-size:11.5px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;
+  color:var(--gray-500);
 }
 
 /* ── CTA "Prenota ora" dentro il box offerta ── */
@@ -431,11 +434,17 @@ h1 em{font-style:italic;color:var(--gold)}
 }
 
 /* ── GALLERIA FOTO (3 immagini sotto il form) ── */
-.galleria-sec{width:100%;margin-top:32px}
+.galleria-sec{width:100%;margin-bottom:var(--gap-sezioni)}
+/* Stessa scala tipografica dell'headline dell'hero */
 .galleria-titolo{
   font-family:var(--font-display);
-  font-size:clamp(18px,4.5vw,22px);font-weight:600;color:var(--ink);
-  text-align:center;margin-bottom:16px;
+  font-size:clamp(30px,8vw,46px);font-weight:700;line-height:1.08;
+  color:var(--ink);text-align:center;letter-spacing:-.5px;margin-bottom:16px;
+}
+.galleria-titolo em{font-style:italic;color:var(--gold)}
+.galleria-sottotitolo{
+  font-size:clamp(13px,3.3vw,14.5px);color:var(--ink-light);line-height:1.6;
+  text-align:center;max-width:500px;margin:0 auto 20px;
 }
 /* La griglia si adatta al numero di foto: la classe has-2 / has-3 la mette il JS. */
 .galleria{display:grid;gap:12px}
@@ -448,14 +457,15 @@ h1 em{font-style:italic;color:var(--gold)}
 .galleria.has-2 .tile:nth-child(2){aspect-ratio:3 / 4;margin-top:clamp(18px,5vw,42px)}
 /* Tre foto: una grande a sinistra, due impilate a destra */
 .galleria.has-3{grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr;height:400px}
-/* Quattro foto: due verticali affiancate in alto, poi due orizzontali
-   a tutta larghezza una sotto l'altra. Le prime due vanno caricate in
-   formato verticale, la terza e la quarta in orizzontale. */
+/* Quattro foto: griglia 2×2, tutte in verticale.
+   Gli scatti dei piatti che abbiamo sono tutti verticali; forzarne due in
+   orizzontale vorrebbe dire tagliare il piatto. Se in futuro arrivano due
+   foto girate in orizzontale, basta sostituire le due righe qui sotto con:
+     .galleria.has-4 .tile:nth-child(3),
+     .galleria.has-4 .tile:nth-child(4){grid-column:1 / 3;aspect-ratio:16 / 9}
+   e la terza e la quarta tornano a tutta larghezza, una sotto l'altra. */
 .galleria.has-4{grid-template-columns:1fr 1fr}
-.galleria.has-4 .tile:nth-child(1),
-.galleria.has-4 .tile:nth-child(2){aspect-ratio:4 / 5}
-.galleria.has-4 .tile:nth-child(3),
-.galleria.has-4 .tile:nth-child(4){grid-column:1 / 3;aspect-ratio:16 / 9}
+.galleria.has-4 .tile{aspect-ratio:4 / 5}
 .galleria .tile{
   position:relative;overflow:hidden;border-radius:var(--radius-md);
   background:var(--gold-pale);
@@ -694,12 +704,12 @@ h1 em{font-style:italic;color:var(--gold)}
 .step-panel.active{display:block}
 
 /* ── Trust footer ── */
-.trust-footer{margin-top:24px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--gray-400);font-weight:500;text-align:center}
+.trust-footer{margin-top:28px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:11px;color:var(--gray-400);font-weight:500;text-align:center}
 .trust-footer svg{width:12px;height:12px;stroke:var(--gray-400);fill:none;stroke-width:2;flex-shrink:0}
 
 /* ── Footer contatti ── */
 .site-footer{
-  width:100%;margin-top:44px;padding-top:32px;border-top:1px solid var(--gray-200);
+  width:100%;margin-top:var(--gap-sezioni);padding-top:32px;border-top:1px solid var(--gray-200);
   display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;
 }
 .footer-name{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--ink)}
@@ -727,7 +737,8 @@ h1 em{font-style:italic;color:var(--gold)}
     padding-left:max(14px, env(safe-area-inset-left, 0px));
     padding-right:max(14px, env(safe-area-inset-right, 0px));
   }
-  .brand-header{margin-bottom:28px}
+  /* Il respiro fra le sezioni lo governa --gap-sezioni, che scala da solo:
+     qui non serve più forzare un margine fisso sull'hero. */
   .logo-wrap{width:80px;height:80px}
   .logo-initials{font-size:28px}
   .booking-card{border-radius:var(--radius-md)}
@@ -814,6 +825,13 @@ h1 em{font-style:italic;color:var(--gold)}
     </div>
     <a class="offerta-cta" id="offertaCta" href="#prenota" style="display:none"></a>
     <div class="offerta-urgenza" id="offertaUrgenza" style="display:none"></div>
+  </section>
+
+  <!-- ═══ GALLERIA FOTO (popolata da CONFIG.galleria) ═══ -->
+  <section class="galleria-sec" id="galleriaSec" style="display:none">
+    <h2 class="galleria-titolo" id="galleriaTitolo"></h2>
+    <p class="galleria-sottotitolo" id="galleriaSottotitolo" style="display:none"></p>
+    <div class="galleria" id="galleriaGrid"></div>
   </section>
 
   <!-- ═══ FORM DI PRENOTAZIONE ═══ -->
@@ -963,12 +981,6 @@ h1 em{font-style:italic;color:var(--gold)}
       </div><!-- booking-body -->
     </div><!-- booking-wizard -->
   </div><!-- booking-card -->
-
-  <!-- ═══ GALLERIA FOTO (popolata da CONFIG.galleria) ═══ -->
-  <section class="galleria-sec" id="galleriaSec" style="display:none">
-    <h2 class="galleria-titolo" id="galleriaTitolo"></h2>
-    <div class="galleria" id="galleriaGrid"></div>
-  </section>
 
   <!-- Trust -->
   <div class="trust-footer">
@@ -1270,7 +1282,12 @@ h1 em{font-style:italic;color:var(--gold)}
 
     // ── Galleria foto ──
     if (C.galleria && C.galleria.attivo && C.galleria.foto && C.galleria.foto.length) {
-      document.getElementById('galleriaTitolo').textContent = C.galleria.titolo || '';
+      document.getElementById('galleriaTitolo').innerHTML = C.galleria.titolo || '';   // <em> ammesso
+      if (C.galleria.sottotitolo) {
+        const gs = document.getElementById('galleriaSottotitolo');
+        gs.textContent = C.galleria.sottotitolo;
+        gs.style.display = '';
+      }
       const grid = document.getElementById('galleriaGrid');
       grid.classList.add('has-' + C.galleria.foto.length);   // layout in base al numero di foto
       grid.innerHTML = C.galleria.foto.map(function(f){
