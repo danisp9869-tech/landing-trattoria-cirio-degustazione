@@ -23,8 +23,11 @@
    Tutto il resto della pagina legge da qui: non toccare il codice sotto.   */
 const CONFIG = {
 
-  /* ─── 0. PROVENIENZA (per A/B test tra le due landing) ──────────────── */
-  origine: "Landing Degustazione",
+  /* ─── 0. OFFERTA (colonna "Offerta" sullo Sheet e riga nella mail) ──── */
+  // Etichetta che dice al ristoratore da quale proposta arriva la prenotazione.
+  // Valori in uso: "Degustazione" (menu degustazione) e "Prenotazione normale"
+  // (prenotazione dal sito e dalla landing generica). Lo Sheet è lo stesso.
+  origine: "Degustazione",
 
   /* ─── 1. BRAND / IDENTITÀ ───────────────────────────────────────────── */
   brand: {
@@ -757,7 +760,11 @@ h1 em{font-style:italic;color:var(--gold)}
 }
 .privacy-text a{color:var(--gold);text-decoration:underline}
 /* ── Form su pagina unica (niente step: tutti i campi, CTA in fondo) ── */
-.form-flat{background:var(--gray-100);padding:20px 16px 18px}
+/* Oro molto diluito: si stacca dal fondo crema della pagina e fa risaltare i
+   campi bianchi, senza il peso dell'oro pieno. */
+.form-flat{background:#f0e7d2;padding:20px 16px 18px}
+/* "(facoltativo)": il grigio chiaro su questo fondo si perderebbe */
+.label-opzionale{font-weight:400;font-style:italic;color:var(--ink-light);opacity:.75}
 .form-row2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .form-flat .form-field{margin-bottom:16px}
 
@@ -1439,7 +1446,7 @@ h1 em{font-style:italic;color:var(--gold)}
     document.getElementById('labelTelefono').textContent = C.testi.labelTelefono;
     document.getElementById('labelEmail').textContent = C.testi.labelEmail;
     document.getElementById('labelRichieste').innerHTML = C.testi.labelRichieste +
-      ' <span style="font-weight:400;color:var(--gray-400);font-style:italic">(facoltativo)</span>';
+      ' <span class="label-opzionale">(facoltativo)</span>';
     document.getElementById('privacyText').innerHTML = buildPrivacyText();
     els.btnConferma.textContent = C.testi.btnConferma;
     document.getElementById('successTitolo').textContent = C.testi.successTitolo;
