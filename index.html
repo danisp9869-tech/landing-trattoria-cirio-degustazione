@@ -1023,8 +1023,8 @@ h1 em{font-style:italic;color:var(--gold)}
     date: null,
     people: null,
     time: null,
-    calYear: new Date().getFullYear(),
-    calMonth: new Date().getMonth(),
+    calYear: oggiRoma().getFullYear(),
+    calMonth: oggiRoma().getMonth(),
     sending: false,
     fbCheckout: false,   // per non inviare InitiateCheckout più volte
   };
@@ -1048,17 +1048,44 @@ h1 em{font-style:italic;color:var(--gold)}
     const dd = String(d.getDate()).padStart(2,'0');
     return d.getFullYear() + '-' + mm + '-' + dd;
   }
+  /* ── Data e ora sempre riferite a Roma ──────────────────────────────────
+     Il calendario nasceva dall'orologio del dispositivo: un cliente che apre
+     la pagina da un altro fuso (o col telefono impostato male) vedrebbe un
+     "oggi" diverso da quello del ristorante. Queste funzioni leggono sempre
+     l'ora di Europe/Rome.                                                  */
+  function partiRoma(d){
+    const fmt = new Intl.DateTimeFormat('it-IT', {
+      timeZone:'Europe/Rome',
+      year:'numeric', month:'2-digit', day:'2-digit',
+      hour:'2-digit', minute:'2-digit', hour12:false
+    });
+    const p = {};
+    fmt.formatToParts(d).forEach(function(x){ p[x.type] = x.value; });
+    return p;
+  }
+  // Mezzanotte di oggi, secondo il calendario italiano
+  function oggiRoma(){
+    const p = partiRoma(new Date());
+    return new Date(Number(p.year), Number(p.month) - 1, Number(p.day));
+  }
+  // Momento dell'invio, in ora italiana: "02/08/2026 22:35"
+  function adessoRoma(){
+    const p = partiRoma(new Date());
+    return p.day + '/' + p.month + '/' + p.year + ' ' + p.hour + ':' + p.minute;
+  }
+
+  // Formato italiano completo: "gio 14/08/2026"
   function formatData(d){
     const days = ['dom','lun','mar','mer','gio','ven','sab'];
     const dd = String(d.getDate()).padStart(2,'0');
     const mm = String(d.getMonth()+1).padStart(2,'0');
-    return days[d.getDay()] + ' ' + dd + '/' + mm;
+    return days[d.getDay()] + ' ' + dd + '/' + mm + '/' + d.getFullYear();
   }
   // Giorno di chiusura settimanale?
   function isGiornoChiuso(d){ return P.giorniChiusura.indexOf(d.getDay()) !== -1; }
   // Data prenotabile? (non passata, non chiusa, entro la finestra)
   function isDataValida(d){
-    const oggi = startOfDay(new Date());
+    const oggi = oggiRoma();
     const limite = addDays(oggi, P.giorniPrenotabili);
     return d >= oggi && d <= limite && !isGiornoChiuso(d);
   }
@@ -1113,7 +1140,7 @@ h1 em{font-style:italic;color:var(--gold)}
   function ancoraChiaveDemo(k){
     if(P.ancoraDemo && /^GIORNO\+\d+$/.test(k)){
       const n = parseInt(k.split('+')[1], 10);
-      return keyData(addDays(startOfDay(new Date()), n));
+      return keyData(addDays(oggiRoma(), n));
     }
     return k;
   }
@@ -1369,7 +1396,7 @@ h1 em{font-style:italic;color:var(--gold)}
 
   /* ── Calendario ── */
   function renderCalendar(){
-    const oggi = startOfDay(new Date());
+    const oggi = oggiRoma();
     els.calMonthLabel.textContent = MONTHS_IT[state.calMonth] + ' ' + state.calYear;
 
     // Disabilita navigazione oltre i limiti prenotabili
@@ -1604,7 +1631,7 @@ h1 em{font-style:italic;color:var(--gold)}
       privacy:    els.inputPrivacy.checked ? 'Sì' : 'No',   // consenso registrato
       origine:    (C.origine || ''),
       sorgente:   (typeof location !== 'undefined' ? location.hostname : ''),
-      creata:     new Date().toISOString(),
+      creata:     adessoRoma(),          // ora italiana, non UTC
     };
 
     state.sending = true;
@@ -1637,7 +1664,7 @@ h1 em{font-style:italic;color:var(--gold)}
   function resetBooking(){
     state.step=1; state.date=null; state.people=null; state.time=null; state.sending=false;
     state.fbCheckout=false;
-    state.calYear=new Date().getFullYear(); state.calMonth=new Date().getMonth();
+    state.calYear=oggiRoma().getFullYear(); state.calMonth=oggiRoma().getMonth();
     els.inputNome.value=''; els.inputTelefono.value=''; els.inputEmail.value='';
     els.inputRichieste.value=''; els.peopleCustom.value='';
     els.inputPrivacy.checked=false;
