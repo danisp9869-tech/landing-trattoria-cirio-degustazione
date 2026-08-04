@@ -4,9 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Menu Degustazione da Cirio — 45€ a persona | Antica Trattoria Cirio</title>
+<meta name="description" content="Menu degustazione a 45€ a persona all'Antica Trattoria Cirio, Torino: antipasto misto, agnolotti al sugo d'arrosto, guancia brasata e pesche alla langarola. Acqua, caffè e vino inclusi. Posti limitati, prenota online.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=League+Spartan:wght@700;800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="hero-agnolotti.jpg" fetchpriority="high">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&family=League+Spartan:wght@700;800&display=swap" rel="stylesheet">
 
 <!-- ═══════════════════════════════════════════════════════════════════════
      FOOD MEDIA LAB · TEMPLATE LANDING PRENOTAZIONI RISTORANTE
@@ -32,11 +34,9 @@ const CONFIG = {
   /* ─── 1. BRAND / IDENTITÀ ───────────────────────────────────────────── */
   brand: {
     nome:     "Antica Trattoria Cirio",  // nome del ristorante
-    tagline:  "Cucina piemontese · Torino",  // piccola scritta sopra il titolo
-    logo:     "logo.png",             // path immagine logo (mostrato senza riquadro); se "" usa le iniziali
-    iniziali: "AC",                   // fallback mostrato nel cerchio se manca il logo
-    // Logo TESTUALE (wordmark) senza riquadro: ha priorità su logo/iniziali. "" per non usarlo.
-    logoWordmark: '',
+    tagline:  "Per chi ama la buona cucina",   // testo del banner in cima all'hero
+    // Il logo immagine è stato tolto: pesava 234KB ed era l'elemento che
+    // faceva slittare l'LCP. In cima ora c'è il nome scritto nella barra.
   },
 
   /* ─── 2. COLORI BRAND (default nero / bianco / oro Food Media Lab) ───── */
@@ -55,16 +55,18 @@ const CONFIG = {
   /* ─── 3. HERO (headline + sottotitolo, unica sezione di testo) ───────── */
   hero: {
     // Usa <em> per evidenziare una parola in oro corsivo
-    headline:    "Vivi l'esperienza della<br><em>vera cucina piemontese</em> a Torino",
-    sottotitolo: "Piatti autentici della tradizione, preparati come una volta: da Cirio ritrovi sapori che altrove non troverai più. Prenota il tuo tavolo e lasciati sorprendere.",
+    headline:    "La <em>vera cucina piemontese</em><br>a Torino",
+    sottotitolo: "Prova il menu degustazione che sta conquistando i palati più raffinati, un viaggio nei ricordi della vera cucina piemontese.",
 
     // Riga di riconoscimento sotto il sottotitolo ("" per non mostrarla)
     riconoscimento: "MICHELIN 2026",
 
-    // Bottone sotto l'hero che porta al form
+    // Bottone sotto l'hero: manda al box del menu, non al form. Il testo
+    // promette il menu, quindi deve arrivare lì; a prenotare ci porta la
+    // CTA del box e quella in barra.
     cta: {
-      testo:  "Prenota un tavolo",
-      target: "prenota",
+      testo:  "Scopri il menu",
+      target: "offerta",
     },
   },
 
@@ -73,7 +75,7 @@ const CONFIG = {
   degustazione: {
     attivo:    true,
     occhiello: "La proposta di Cirio",
-    titolo:    "Menù degustazione",
+    titolo:    "Menu degustazione",
     testo:     "Fatti trasportare nel percorso di Cirio: una degustazione dei nostri piatti di eccellenza, un'esperienza immersa nella vera cucina piemontese.",
     prezzo:    "45 €",
     prezzoNota:"a persona",
@@ -318,7 +320,7 @@ body::before{
   width:100%;
   margin:auto;
   /* Rispetta le "aree sicure" dei device con notch/home indicator */
-  padding-top:40px;
+  padding-top:0;
   padding-bottom:calc(40px + env(safe-area-inset-bottom, 0px));
   padding-left:max(24px, env(safe-area-inset-left, 0px));
   padding-right:max(24px, env(safe-area-inset-right, 0px));
@@ -328,33 +330,62 @@ body::before{
 }
 
 /* ── HERO ── */
-.brand-header{text-align:center;width:100%;margin-bottom:var(--gap-sezioni)}
-.logo-wrap{
-  width:100px;height:100px;border-radius:50%;
-  background:var(--warm-white);
-  margin:0 auto 24px;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-  box-shadow:0 0 0 1px rgba(184,147,58,.2), var(--shadow-md);
+/* Barra in alto: nome a sinistra, bottone a destra. Sostituisce il logo. */
+.topbar{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  gap:12px;margin-bottom:36px;
 }
-.logo-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.topbar-nome{
+  font-family:var(--font-display);font-weight:700;
+  font-size:clamp(15px,4.2vw,19px);line-height:1.15;
+  color:#fff;letter-spacing:-.2px;
+  text-shadow:0 1px 3px rgba(0,0,0,.45);   /* stacca dalla foto */
+}
+.topbar-cta{
+  flex-shrink:0;
+  display:inline-block;padding:10px 20px;border-radius:999px;
+  background:var(--cta-bg);color:#fff;text-decoration:none;
+  font-family:var(--font-body);font-size:13px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+  box-shadow:var(--shadow-md);transition:filter .2s,transform .1s;
+}
+.topbar-cta:hover{filter:brightness(1.06)}
+.topbar-cta:active{transform:scale(.98)}
+
+/* Hero a tutta pagina: la foto degli agnolotti parte dal bordo superiore e
+   passa sotto la barra col nome e la CTA. Niente angoli arrotondati: deve
+   leggersi come una fascia piena, non come una scheda.
+   La velatura è più leggera in alto, dove non c'è testo, e si chiude sotto
+   per tenere leggibile il sottotitolo. */
+.hero-full{
+  position:relative;width:100%;
+  margin-bottom:var(--gap-sezioni);
+  background-image:
+    linear-gradient(rgba(20,15,10,.42), rgba(20,15,10,.58) 55%, rgba(20,15,10,.68)),
+    url("hero-agnolotti.jpg");
+  background-size:cover;
+  background-position:center;
+}
+.hero-inner{
+  max-width:640px;margin:0 auto;
+  padding-top:calc(22px + env(safe-area-inset-top, 0px));
+  padding-bottom:40px;
+  padding-left:max(24px, env(safe-area-inset-left, 0px));
+  padding-right:max(24px, env(safe-area-inset-right, 0px));
+}
+.brand-header{position:relative;text-align:center;width:100%}
+/* Sul fondo scuro i testi dell'hero si invertono */
+.brand-header h1{color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.brand-header h1 em{color:var(--gold-light)}
+.brand-header .brand-eyebrow{color:var(--gold-light);text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.brand-header .subtitle{color:rgba(255,255,255,.92);text-shadow:0 1px 6px rgba(0,0,0,.5)}
+.brand-header .hero-michelin{
+  display:inline-block;color:#fff;background:#c1002a;
+  padding:7px 16px;border-radius:999px;font-size:clamp(13px,3.4vw,15px);
+}
 /* ── Logo immagine senza cerchio/riquadro (sfondo trasparente) ── */
-.logo-wrap.is-logo-img{
-  width:auto;height:auto;max-width:280px;
-  border-radius:0;background:none;box-shadow:none;overflow:visible;padding:0;
-}
-.logo-wrap.is-logo-img img{width:100%;height:auto;max-height:150px;object-fit:contain}
-.logo-initials{
-  font-family:var(--font-display);
-  font-size:34px;font-weight:700;color:var(--gold);letter-spacing:1px;
-}
 
 /* ── Logo testuale (wordmark), senza cerchio/riquadro ── */
-.logo-wrap.is-wordmark{
-  width:auto;height:auto;max-width:300px;
-  border-radius:0;background:none;box-shadow:none;overflow:visible;
-  flex-direction:column;gap:0;padding:0;
-}
-.logo-wrap.is-wordmark span{display:block;color:var(--gold);text-align:center}
 .wm-antica{font-family:'Great Vibes',cursive;font-size:clamp(30px,9vw,42px);font-weight:400;line-height:.9;margin-bottom:2px}
 .wm-trattoria{font-family:'League Spartan',sans-serif;font-weight:800;font-size:clamp(24px,7vw,32px);letter-spacing:3px;text-transform:uppercase;line-height:1}
 .wm-cirio{font-family:'League Spartan',sans-serif;font-weight:800;font-size:clamp(42px,13vw,60px);letter-spacing:1px;text-transform:uppercase;line-height:.92}
@@ -362,9 +393,33 @@ body::before{
   font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;
   color:var(--gold);margin-bottom:14px;
 }
+/* Banner in cima all'hero: pastiglia con pallino, come su I Love Meat ma
+   nell'oro di Cirio. Il fondo velato lo stacca dalla foto. */
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  margin-bottom:16px;padding:5px 12px;
+  border:1px solid rgba(232,213,163,.45);border-radius:999px;
+  background:rgba(20,15,10,.55);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  color:var(--gold-light);
+  font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  line-height:1;
+}
+.hero-badge .dot{
+  width:5px;height:5px;border-radius:50%;flex-shrink:0;
+  background:var(--gold-light);
+  animation:pulsa 1.8s infinite;
+}
+@keyframes pulsa{
+  0%{box-shadow:0 0 0 0 rgba(232,213,163,.5)}
+  70%{box-shadow:0 0 0 7px rgba(232,213,163,0)}
+  100%{box-shadow:0 0 0 0 rgba(232,213,163,0)}
+}
+/* Chi preferisce meno movimento non vede il pallino pulsare */
+@media (prefers-reduced-motion:reduce){ .hero-badge .dot{animation:none} }
 h1{
   font-family:var(--font-display);
-  font-size:clamp(30px,8vw,46px);font-weight:700;line-height:1.08;
+  font-size:clamp(38px,10.5vw,60px);font-weight:700;line-height:1.04;
   color:var(--ink);margin-bottom:16px;letter-spacing:-.5px;
 }
 h1 em{font-style:italic;color:var(--gold)}
@@ -892,9 +947,7 @@ h1 em{font-style:italic;color:var(--gold)}
   }
   /* Il respiro fra le sezioni lo governa --gap-sezioni, che scala da solo:
      qui non serve più forzare un margine fisso sull'hero. */
-  .logo-wrap{width:80px;height:80px}
-  .logo-initials{font-size:28px}
-  .booking-card{border-radius:var(--radius-md)}
+      .booking-card{border-radius:var(--radius-md)}
   .wizard-frame{padding:12px;min-height:430px}
   .people-grid{grid-template-columns:repeat(4,1fr);gap:7px}
   .people-btn{padding:10px 4px;font-size:14px}
@@ -911,9 +964,7 @@ h1 em{font-style:italic;color:var(--gold)}
     padding-left:max(12px, env(safe-area-inset-left, 0px));
     padding-right:max(12px, env(safe-area-inset-right, 0px));
   }
-  .logo-wrap{width:72px;height:72px}
-  .logo-initials{font-size:24px}
-  .wizard-frame{padding:10px;min-height:420px}
+      .wizard-frame{padding:10px;min-height:420px}
   .wizard-card{padding:16px}
   .people-grid{gap:6px}
   .people-btn{padding:9px 3px;font-size:13px}
@@ -946,17 +997,29 @@ h1 em{font-style:italic;color:var(--gold)}
 </script>
 </head>
 <body>
-<div class="wrapper">
 
-  <!-- ═══ HERO ═══ -->
-  <header class="brand-header">
-    <div class="logo-wrap" id="logoWrap"></div>
-    <div class="brand-eyebrow" id="brandEyebrow"></div>
-    <h1 id="heroHeadline"></h1>
-    <p class="subtitle" id="heroSubtitle"></p>
-    <div class="hero-michelin" id="heroMichelin" style="display:none"></div>
-    <a class="offerta-cta" id="heroCta" href="#prenota" style="display:none"></a>
-  </header>
+<!-- ═══ HERO A TUTTA PAGINA: parte dal bordo superiore e comprende la barra ═══ -->
+<section class="hero-full">
+  <div class="hero-inner">
+
+    <!-- barra: nome a sinistra, CTA a destra -->
+    <div class="topbar">
+      <span class="topbar-nome" id="topbarNome"></span>
+      <a class="topbar-cta" href="#prenota" id="topbarCta">Prenota</a>
+    </div>
+
+    <header class="brand-header">
+      <span class="hero-badge"><span class="dot"></span><span id="brandEyebrow"></span></span>
+      <h1 id="heroHeadline"></h1>
+      <p class="subtitle" id="heroSubtitle"></p>
+      <div class="hero-michelin" id="heroMichelin" style="display:none"></div>
+      <a class="offerta-cta" id="heroCta" href="#prenota" style="display:none"></a>
+    </header>
+
+  </div>
+</section>
+
+<div class="wrapper">
 
   <!-- ═══ OFFERTA MENU DEGUSTAZIONE (popolata da CONFIG.degustazione) ═══ -->
   <section class="offerta" id="offerta" style="display:none">
@@ -1356,17 +1419,9 @@ h1 em{font-style:italic;color:var(--gold)}
 
   // Popola hero, testi form, footer da CONFIG
   function popolaContenuti(){
-    // Logo
-    const logoWrap = document.getElementById('logoWrap');
-    if(C.brand.logoWordmark){
-      logoWrap.classList.add('is-wordmark');
-      logoWrap.innerHTML = C.brand.logoWordmark;
-    } else if(C.brand.logo){
-      logoWrap.classList.add('is-logo-img');
-      logoWrap.innerHTML = '<img src="'+C.brand.logo+'" alt="Logo '+esc(C.brand.nome)+'">';
-    } else {
-      logoWrap.innerHTML = '<span class="logo-initials">'+esc(C.brand.iniziali)+'</span>';
-    }
+    // Nome nella barra in alto (il logo immagine non c'è più: pesava 234KB
+    // ed era l'elemento che faceva slittare l'LCP)
+    document.getElementById('topbarNome').textContent = C.brand.nome;
     document.getElementById('brandEyebrow').textContent = C.brand.tagline;
     document.getElementById('heroHeadline').innerHTML = C.hero.headline;      // <em> ammesso
     document.getElementById('heroSubtitle').textContent = C.hero.sottotitolo;
@@ -1435,7 +1490,7 @@ h1 em{font-style:italic;color:var(--gold)}
       grid.innerHTML = C.galleria.foto.map(function(f){
         return '<figure class="tile">' +
                  '<span class="segnaposto">Foto in arrivo</span>' +
-                 '<img src="'+esc(f.src)+'" alt="'+esc(f.alt||'')+'" loading="lazy">' +
+                 '<img src="'+esc(f.src)+'" alt="'+esc(f.alt||'')+'" width="640" height="800" loading="lazy" decoding="async">' +
                '</figure>';
       }).join('');
       // Ogni riquadro parte come segnaposto e diventa foto solo quando l'immagine
