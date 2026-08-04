@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Menu Degustazione da Cirio — 45€ a persona | Antica Trattoria Cirio</title>
-<meta name="description" content="Menu degustazione a 45€ a persona all'Antica Trattoria Cirio, Torino: antipasto misto, agnolotti al sugo d'arrosto, guancia brasata e pesche alla langarola. Acqua, caffè e vino inclusi. Posti limitati, prenota online.">
+<meta name="description" content="Menu degustazione a 45€ a persona all'Antica Trattoria Cirio, Torino: antipasto misto piemontese, agnolotti al sugo d'arrosto, guancia brasata e pesche alla langarola. Acqua, caffè e vino inclusi. Posti limitati, prenota online.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="image" href="hero-agnolotti.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="hero-agnolotti.jpg" media="(max-width:899px)" fetchpriority="high">
+<link rel="preload" as="image" href="hero-agnolotti-lg.jpg" media="(min-width:900px)" fetchpriority="high">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&family=League+Spartan:wght@700;800&display=swap" rel="stylesheet">
 
 <!-- ═══════════════════════════════════════════════════════════════════════
@@ -86,7 +87,7 @@ const CONFIG = {
       titolo:     "Un viaggio nella tradizione piemontese",
       sottotitolo:"",   // "" = nessun sottotitolo
       piatti: [
-        "Antipasto misto",
+        "Antipasto misto piemontese",
         "Agnolotto al sugo d'arrosto fatto a mano",
         "Guancia brasata su purè di patate",
         "Pesche ripiene alla langarola",
@@ -984,6 +985,61 @@ h1 em{font-style:italic;color:var(--gold)}
   .brand-header{margin-bottom:18px}
   .wizard-frame{min-height:auto}
   .wizard-content{min-height:auto}
+  /* A schermo sdraiato e basso l'hero a tutta altezza nasconderebbe tutto:
+     qui torna ad adattarsi al contenuto. */
+  .hero-full, .hero-inner{min-height:0}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   HERO A TUTTA SCHERMATA
+   Chi apre la landing deve vedere la foto per intero, con la CTA dentro
+   la prima schermata. 100svh e non 100vh: su mobile vh conta anche la
+   barra degli indirizzi, e il fondo finirebbe tagliato.
+   ═══════════════════════════════════════════════════════════════════════ */
+.hero-full{min-height:100vh;min-height:100svh}
+.hero-inner{
+  min-height:100vh;min-height:100svh;
+  display:flex;flex-direction:column;
+}
+/* La barra resta in cima, il resto si centra nello spazio che avanza */
+.hero-inner .brand-header{margin-top:auto;margin-bottom:auto}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   DESKTOP
+   Sotto i 900px la pagina resta la colonna stretta pensata per il telefono.
+   Sopra, il contenuto si allarga ma le singole schede restano leggibili:
+   una scheda larga 1000px sarebbe faticosa da leggere.
+   ═══════════════════════════════════════════════════════════════════════ */
+@media (min-width:900px){
+  .hero-inner{max-width:1000px}
+  .wrapper{max-width:1000px}
+
+  /* A tutta schermata su desktop la foto da 825px verrebbe ingrandita e
+     sfocata: qui si usa la versione a 1200px, che il telefono non scarica. */
+  .hero-full{
+    background-image:
+      linear-gradient(rgba(20,15,10,.42), rgba(20,15,10,.58) 55%, rgba(20,15,10,.68)),
+      url("hero-agnolotti-lg.jpg");
+  }
+
+  /* Testi dell'hero più ampi ma non sconfinati */
+  .brand-header h1{max-width:15ch;margin-left:auto;margin-right:auto}
+  .brand-header .subtitle{max-width:60ch}
+
+  /* Le schede restano centrate e di larghezza leggibile */
+  .offerta{max-width:680px;margin-left:auto;margin-right:auto}
+  .booking-card{max-width:720px;margin-left:auto;margin-right:auto}
+  .trust-footer{max-width:720px;margin-left:auto;margin-right:auto}
+  .invito-titolo{max-width:700px}
+
+  /* La galleria sfrutta la larghezza: quattro foto in fila */
+  .galleria.has-4{grid-template-columns:repeat(4,1fr);gap:16px}
+  .galleria.has-4 .tile,
+  .galleria.has-4 .tile:nth-child(3),
+  .galleria.has-4 .tile:nth-child(4){grid-column:auto;aspect-ratio:4 / 5}
+
+  /* Mappa più alta: su schermo largo 300px sembrano una striscia */
+  .mappa-box{height:400px}
 }
 </style>
 
